@@ -30,21 +30,32 @@ ENV PATH /root/.cabal/bin:/root/.local/bin:/opt/cabal/2.4/bin:/opt/ghc/8.6.3/bin
 
 #CMD ["ghci"]
 
-
-######## Installing HaskellLab ########
+######## Installing Pexpect Kernel Package ########
 
 USER root
 
-RUN rm -rf $GNUPGHOME /var/lib/apt/lists/* /$HOME/stack.tar.gz.asc /$HOME/stack.tar.gz
+RUN mkdir /pexpect_kernel && \
+    chown $NB_UID /pexpect_kernel && \
+    chown -R $NB_UID /home/jovyan && \
+    chmod -R o+X /home/jovyan && \
+    rm -rf $GNUPGHOME /var/lib/apt/lists/* /$HOME/stack.tar.gz.asc /$HOME/stack.tar.gz
 
 USER $NB_UID
 
-RUN mkdir /IGHCI && \
-    cd /IGHCI
+COPY pexpect_kernel/ /pexpect_kernel/pexpect_kernel
+COPY setup.py /pexpect_kernel/
 
-COPY IGHCI/ /IGHCI/
+RUN cd /pexpect_kernel && \
+    pip install /pexpect_kernel
 
-RUN python -m install
+######## Installing Bash Kernel ########
+
+RUN python3 -m pexpect_kernel.install bash
+
+######## Installing IGHCI Kernel ########
+
+#RUN python3 -m pexpect_kernel.install ghci
+
 
 WORKDIR $HOME
 

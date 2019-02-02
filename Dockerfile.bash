@@ -12,13 +12,12 @@ RUN mkdir /var/lib/apt/lists/partial && \
 
 USER $NB_UID
 
-COPY pexpect_kernel/ /pexpect_kernel/bash_kernel
-COPY flit.ini /pexpect_kernel/
+COPY pexpect_kernel/ /pexpect_kernel/pexpect_kernel
+COPY setup.py /pexpect_kernel/
 
 RUN cd /pexpect_kernel && \
-    ls -al . && \
-    pip install bash_kernel && \
-    python3 -m bash_kernel.install
+    pip install /pexpect_kernel && \
+    python3 -m pexpect_kernel.install bash
 
 WORKDIR $HOME
 
