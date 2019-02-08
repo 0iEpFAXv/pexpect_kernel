@@ -27,7 +27,7 @@ Manual Usage
 
 For manual installation or global usage:
 
-To install::
+To install:
 
 .. code:: shell
 
