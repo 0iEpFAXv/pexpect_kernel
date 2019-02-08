@@ -6,7 +6,7 @@ This requires IPython 3.
 Docker Usage
 ------------
 
-For docker based usage, set up these environment variables (the values are just examples JOVYAN_STACK_PATH is optional unless you use the ghci kernel):
+For docker based usage, set up these environment variables.  These values are just examples, but the directories should allow reading and writing.  The JOVYAN_STACK_PATH is used by ghci_jupyter_lab container.
 
 .. code:: shell
     
