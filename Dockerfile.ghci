@@ -34,8 +34,11 @@ ENV PATH /root/.cabal/bin:/root/.local/bin:/opt/cabal/2.4/bin:/opt/ghc/8.6.3/bin
 
 USER root
 
+COPY jupyterlab_ace/ /jupyterlab_ace/jupyterlab_ace
+
 RUN mkdir /pexpect_kernel && \
     chown $NB_UID /pexpect_kernel && \
+    chown -R $NB_UID /jupyterlab_ace && \
     rm -rf $GNUPGHOME /var/lib/apt/lists/* /$HOME/stack.tar.gz.asc /$HOME/stack.tar.gz
 
 USER $NB_UID
@@ -54,6 +57,10 @@ RUN python3 -m pexpect_kernel.install bash
 
 RUN python3 -m pexpect_kernel.install ghci
 
+######## Installing the ACE extension ########
+
+RUN cd /jupyterlab_ace && \
+    jupyter labextension install jupyterlab_ace
 
 WORKDIR $HOME
 
