@@ -4,15 +4,17 @@ import os
 
 #from IPython.
 
-_TEXT_SAVED_IMAGE = "bash_kernel: saved image data to:"
+def _TEXT_SAVED_IMAGE(name):
+    return "%s: saved image data to:" % (name,)
 
-image_setup_cmd = """
-display () {
-    TMPFILE=$(mktemp ${TMPDIR-/tmp}/bash_kernel.XXXXXXXXXX)
-    cat > $TMPFILE
-    echo "%s $TMPFILE" >&2
-}
-""" % _TEXT_SAVED_IMAGE
+def image_setup_cmd(name):
+    return """
+    display () {
+        TMPFILE=$(mktemp ${TMPDIR-/tmp}/%s.XXXXXXXXXX)
+        cat > $TMPFILE
+        echo "%s $TMPFILE" >&2
+    }
+    """ % (name, _TEXT_SAVED_IMAGE(name))
 
 def display_data_for_image(filename):
     with open(filename, 'rb') as f:
@@ -33,12 +35,12 @@ def display_data_for_image(filename):
     return content
 
 
-def extract_image_filenames(output):
+def extract_image_filenames(name, output):
     output_lines = []
     image_filenames = []
 
     for line in output.split("\n"):
-        if line.startswith(_TEXT_SAVED_IMAGE):
+        if line.startswith(_TEXT_SAVED_IMAGE(name)):
             filename = line.rstrip().split(": ")[-1]
             image_filenames.append(filename)
         else:

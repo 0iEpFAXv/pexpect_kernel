@@ -22,8 +22,8 @@ RUN mkdir /var/lib/apt/lists/partial && \
 
 USER $NB_UID
 
-RUN /usr/local/bin/stack config set system-ghc --global true && \
-    /usr/local/bin/stack config set install-ghc --global false
+#RUN /usr/local/bin/stack config set system-ghc --global true && \
+#    /usr/local/bin/stack config set install-ghc --global false
 
 
 ENV PATH /root/.cabal/bin:/root/.local/bin:/opt/cabal/2.4/bin:/opt/ghc/8.6.3/bin:/home/jovyan/.local/bin:$(stack path --local-install-root)/bin:$(stack path --snapshot-install-root)/bin:$(stack path --compiler-bin):/home/${NB_USER}/.local/bin:$PATH
@@ -36,8 +36,6 @@ USER root
 
 RUN mkdir /pexpect_kernel && \
     chown $NB_UID /pexpect_kernel && \
-    chown -R $NB_UID /home/jovyan && \
-    chmod -R o+X /home/jovyan && \
     rm -rf $GNUPGHOME /var/lib/apt/lists/* /$HOME/stack.tar.gz.asc /$HOME/stack.tar.gz
 
 USER $NB_UID
@@ -54,7 +52,7 @@ RUN python3 -m pexpect_kernel.install bash
 
 ######## Installing IGHCI Kernel ########
 
-#RUN python3 -m pexpect_kernel.install ghci
+RUN python3 -m pexpect_kernel.install ghci
 
 
 WORKDIR $HOME
