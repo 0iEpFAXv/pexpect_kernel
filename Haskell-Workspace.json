@@ -1,0 +1,78 @@
+{
+  "environments": {
+    "default": {
+      "recipe": {
+        "contentType": "text/x-yaml",
+        "type": "compose",
+        "content": "services:\n haskell-ls-machine:\n image: tbilltechrep/hie-ls-machine\n mem_limit: 2147483648\n 
+haskell-dev-machine:\n image: tbilltechrep/ighci\n mem_limit: 2147483648\n depends_on:\n - haskell-ls-machine\n"
+      },
+      "machines": {
+        "haskell-ls-machine": {
+          "env": {},
+          "servers": {
+            "haskell-ls": {
+              "protocol": "tcp",
+              "port": "4417",
+              "attributes": {
+                "languageRegexes": "[ {\"languageId\":\"haskell\", \"regex\":\".*\\\\.hs$\"}]",
+                "internal": "true",
+                "id": "haskell-ls",
+                "type": "ls"
+              }
+            }
+          },
+          "volumes": {
+            "stack": {
+              "path": "/home/user/.stack"
+            },
+            "projects": {
+              "path": "/projects"
+            }
+          },
+          "installers": [],
+          "attributes": {
+            "memoryLimitBytes": "2147483648"
+          }
+        },
+        "haskell-dev-machine": {
+          "env": {},
+          "servers": {
+            "jupyter": {
+              "protocol": "http",
+              "port": "8888",
+              "attributes": {}
+            }
+          },
+          "volumes": {
+            "stack": {
+              "path": "/home/user/.stack"
+            },
+            "projects": {
+              "path": "/projects"
+            }
+          },
+          "installers": [
+            "org.eclipse.che.exec",
+            "org.eclipse.che.unison",
+            "org.eclipse.che.git-credentials",
+            "org.eclipse.che.ssh",
+            "org.eclipse.che.terminal",
+            "org.eclipse.che.ws-agent"
+          ],
+          "attributes": {
+            "memoryLimitBytes": "2147483648"
+          }
+        }
+      }
+    }
+  },
+  "projects": [],
+  "commands": [],
+  "defaultEnv": "default",
+  "name": "haskell-workspace",
+  "attributes": {
+    "editor": "",
+    "plugins": ""
+  }
+}

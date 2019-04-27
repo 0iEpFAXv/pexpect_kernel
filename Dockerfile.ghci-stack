@@ -1,0 +1,145 @@
+FROM debian:stretch
+
+######## Installing Che stack-base ########
+ENV JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64
+ENV PATH $JAVA_HOME/bin:$PATH
+RUN apt-get update && \
+    apt-get -y install \
+    openssh-server \
+    sudo \
+    rsync \
+    procps \
+    openjdk-8-jdk-headless \
+    wget \
+    unzip \
+    mc \
+    locales \
+    ca-certificates \
+    curl \
+    tar \
+    gzip \
+    gnupg2 \
+    bash-completion && \
+    mkdir /var/run/sshd && \
+    sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd && \
+    echo "%sudo ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
+    # Adding user to the 'root' is a workaround for https://issues.jboss.org/browse/CDK-305
+    useradd -u 1000 -G users,sudo,root -d /home/user --shell /bin/bash -m user && \
+    usermod -p "*" user && \
+    sudo echo -e "deb http://ppa.launchpad.net/git-core/ppa/ubuntu precise main\ndeb-src http://ppa.launchpad.net/git-core/ppa/ubuntu precise main" >> /etc/apt/sources.list.d/sources.list && \
+    sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A1715D88E1DF1F24 && \
+    sudo apt-get install git subversion -y
+
+ENV LANG C.UTF-8
+USER user
+RUN sudo localedef -i en_US -f UTF-8 en_US.UTF-8 && \
+    svn --version && \
+    sed -i 's/# store-passwords = no/store-passwords = yes/g' /home/user/.subversion/servers && \
+    sed -i 's/# store-plaintext-passwords = no/store-plaintext-passwords = yes/g' /home/user/.subversion/servers
+#COPY open-jdk-source-file-location /open-jdk-source-file-location
+EXPOSE 22 4403
+WORKDIR /projects
+
+# The following instructions set the right
+# permissions and scripts to allow the container
+# to be run by an arbitrary user (i.e. a user
+# that doesn't already exist in /etc/passwd)
+ENV HOME /home/user
+RUN for f in "/home/user" "/etc/passwd" "/etc/group" "/projects"; do\
+           sudo chgrp -R 0 ${f} && \
+           sudo chmod -R g+rwX ${f}; \
+        done && \
+        # Generate passwd.template \
+        cat /etc/passwd | \
+        sed s#user:x.*#user:x:\${USER_ID}:\${GROUP_ID}::\${HOME}:/bin/bash#g \
+        > /home/user/passwd.template && \
+        # Generate group.template \
+        cat /etc/group | \
+        sed s#root:x:0:#root:x:0:0,\${USER_ID}:#g \
+        > /home/user/group.template && \
+        sudo sed -ri 's/StrictModes yes/StrictModes no/g' /etc/ssh/sshd_config
+
+
+######## Installing Che tomcat ########
+
+ENV MAVEN_VERSION=3.3.9 \
+    JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64 \
+    TOMCAT_HOME=/home/user/tomcat8 \
+    TERM=xterm
+ENV M2_HOME=/home/user/apache-maven-$MAVEN_VERSION
+ENV PATH=$JAVA_HOME/bin:$M2_HOME/bin:$PATH
+
+RUN mkdir /home/user/tomcat8 /home/user/apache-maven-$MAVEN_VERSION && \
+    wget -qO- "http://apache.ip-connect.vn.ua/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz" | tar -zx --strip-components=1 -C /home/user/apache-maven-$MAVEN_VERSION/ && \
+    wget -qO- "http://archive.apache.org/dist/tomcat/tomcat-8/v8.0.24/bin/apache-tomcat-8.0.24.tar.gz" | tar -zx --strip-components=1 -C /home/user/tomcat8 && \
+    rm -rf /home/user/tomcat8/webapps/* && \
+    sudo mkdir -p /home/user/.m2 && \
+    sudo mkdir -p /home/user/jdtls/data && \
+    sudo chown -R 0 /home/user && \
+    sudo chmod -R g+w /home/user
+
+
+######## Installing Che wsagent ########
+
+#COPY wsagent.script.sh /tmp/wsagent.script.sh
+#RUN /tmp/wsagent.script.sh
+
+
+######## Installing Haskell ########
+# See https://github.com/freebroccolo/docker-haskell/ 8.6
+
+USER root
+
+#RUN mkdir /var/lib/apt/lists/partial && \
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends python3-pip python3-dev python3-setuptools && \
+    echo 'deb http://downloads.haskell.org/debian stretch main' > /etc/apt/sources.list.d/ghc.list && \
+    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys BA3CBA3FFE22B574 && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends ghc-8.6.3 cabal-install-2.4 \
+    zlib1g-dev libtinfo-dev libsqlite3-dev g++ netbase xz-utils make libc6-dev libffi-dev libgmp-dev && \
+    curl -fSL https://github.com/commercialhaskell/stack/releases/download/v1.9.3/stack-1.9.3-linux-x86_64.tar.gz -o stack.tar.gz && \
+    curl -fSL https://github.com/commercialhaskell/stack/releases/download/v1.9.3/stack-1.9.3-linux-x86_64.tar.gz.asc -o stack.tar.gz.asc && \
+    export GNUPGHOME="$(mktemp -d)" && \
+    mkdir ~/.gnupg && \
+    echo "disable-ipv6" >> ~/.gnupg/dirmngr.conf && \
+    gpg --batch --keyserver keyserver.ubuntu.com --recv-keys C5705533DA4F78D8664B5DC0575159689BEFB442 && \
+    gpg --batch --verify stack.tar.gz.asc stack.tar.gz && \
+    tar -xf stack.tar.gz -C /usr/local/bin --strip-components=1 && \
+    apt-get clean && \
+    apt-get -y autoremove \
+    && apt-get -y clean \
+    && rm -rf /var/lib/apt/lists/*
+
+ENV PATH /root/.cabal/bin:/root/.local/bin:/opt/cabal/2.4/bin:/opt/ghc/8.6.3/bin:$(stack path --local-install-root)/bin:$(stack path --snapshot-install-root)/bin:$(stack path --compiler-bin):/home/user/.local/bin:$PATH
+
+######## Installing Pexpect Kernel Package ########
+
+RUN mkdir /pexpect_kernel && \
+    chown user /pexpect_kernel && \
+    rm -rf $GNUPGHOME /var/lib/apt/lists/* /$HOME/stack.tar.gz.asc /$HOME/stack.tar.gz && \
+    pip3 install jupyter
+
+COPY pexpect_kernel/ /pexpect_kernel/pexpect_kernel
+COPY setup.py /pexpect_kernel/
+
+RUN cd /pexpect_kernel && \
+    pip3 install /pexpect_kernel
+
+######## Installing Bash Kernel ########
+
+RUN python3 -m pexpect_kernel.install bash
+
+####### Installing GHCI Kernel ########
+
+RUN python3 -m pexpect_kernel.install ghci && \
+    ln -s /home/user /home/jovyan
+
+USER user
+
+EXPOSE 8888
+WORKDIR /home/user
+
+COPY ["ghci_entrypoint.sh", "/home/user/entrypoint.sh"]
+ENTRYPOINT ["/home/user/entrypoint.sh"]
+CMD ["jupyter", "notebook", "--ip=0.0.0.0"]

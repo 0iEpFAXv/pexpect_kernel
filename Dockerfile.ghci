@@ -1,5 +1,6 @@
 FROM jupyter/scipy-notebook
 
+######## Installing Haskell ########
 # See https://github.com/freebroccolo/docker-haskell/ 8.6
 
 USER root
@@ -23,10 +24,6 @@ RUN mkdir /var/lib/apt/lists/partial && \
     tar -xf stack.tar.gz -C /usr/local/bin --strip-components=1 
 
 USER $NB_UID
-
-#RUN /usr/local/bin/stack config set system-ghc --global true && \
-#    /usr/local/bin/stack config set install-ghc --global false
-
 
 ENV PATH /root/.cabal/bin:/root/.local/bin:/opt/cabal/2.4/bin:/opt/ghc/8.6.3/bin:/home/jovyan/.local/bin:$(stack path --local-install-root)/bin:$(stack path --snapshot-install-root)/bin:$(stack path --compiler-bin):/home/${NB_USER}/.local/bin:$PATH
 
@@ -58,5 +55,3 @@ RUN python3 -m pexpect_kernel.install ghci
 
 
 WORKDIR $HOME
-
-

@@ -1,0 +1,10 @@
+services:
+ haskell-ls-machine:
+  image: tbilltechrep/hie-ls-machine
+  mem_limit: 2147483648
+ haskell-dev-machine:
+  image: tbilltechrep/ighci
+  mem_limit: 2147483648
+  depends_on:
+   - haskell-ls-machine
+
