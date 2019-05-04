@@ -4,8 +4,7 @@
       "recipe": {
         "contentType": "text/x-yaml",
         "type": "compose",
-        "content": "services:\n haskell-ls-machine:\n image: tbilltechrep/hie-ls-machine\n mem_limit: 2147483648\n 
-haskell-dev-machine:\n image: tbilltechrep/ighci\n mem_limit: 2147483648\n depends_on:\n - haskell-ls-machine\n"
+        "content": "services:\n haskell-ls-machine:\n  image: tbilltechrep/hie-ls-machine\n  mem_limit: 2147483648\n haskell-dev-machine:\n  image: tbilltechrep/ighci\n  mem_limit: 2147483648\n  depends_on:\n   - haskell-ls-machine\n"
       },
       "machines": {
         "haskell-ls-machine": {
@@ -15,7 +14,7 @@ haskell-dev-machine:\n image: tbilltechrep/ighci\n mem_limit: 2147483648\n depen
               "protocol": "tcp",
               "port": "4417",
               "attributes": {
-                "languageRegexes": "[ {\"languageId\":\"haskell\", \"regex\":\".*\\\\.hs$\"}]",
+                "languageRegexes": "[ {\"languageId\":\"haskell\", \"regex\":\".*\\\\.hs$\"}, {\"languageId\":\"literate_haskell\", \"regex\":\".*\\\\.lhs$\"}, {\"languageId\":\"cabal\", \"regex\":\".*\\\\.cabal$\"}]",
                 "internal": "true",
                 "id": "haskell-ls",
                 "type": "ls"
@@ -67,12 +66,36 @@ haskell-dev-machine:\n image: tbilltechrep/ighci\n mem_limit: 2147483648\n depen
       }
     }
   },
-  "projects": [],
+  "projects": [
+    {
+      "source": {
+        "location": "https://github.com/TBillTech/classy-prelude-template.git",
+        "type": "github",
+        "parameters": {}
+      },
+      "description": "Classy Prelude plus lots of language extensions for Haskell",
+      "links": [],
+      "mixins": [
+        "pullrequest"
+      ],
+      "problems": [],
+      "name": "classy-prelude-template",
+      "type": "blank",
+      "path": "/classy-prelude-template",
+      "attributes": {
+        "contribute_to_branch": [
+          "master"
+        ]
+      }
+    }
+  ],
   "commands": [],
   "defaultEnv": "default",
   "name": "haskell-workspace",
   "attributes": {
     "editor": "",
     "plugins": ""
-  }
+  },
+  "links": []
 }
+

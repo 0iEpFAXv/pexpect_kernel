@@ -52,12 +52,13 @@ ENV PATH /root/.cabal/bin:/root/.local/bin:/opt/cabal/2.4/bin:/opt/ghc/8.6.3/bin
 RUN cd /tmp && \
     git clone https://github.com/haskell/haskell-ide-engine --recurse-submodules && \
     cd haskell-ide-engine && \
-    stack ./install.hs hie-8.6.3 && \
-    cd /tmp && \
-    rm -rf haskell-ide-engine
+    stack ./install.hs build-all && \
+    cd /tmp
+# && \
+#    rm -rf haskell-ide-engine
 
 EXPOSE 4417
-CMD socat TCP4-LISTEN:4417,reuseaddr,fork EXEC:"hie"
+CMD socat TCP4-LISTEN:4417,reuseaddr,fork EXEC:"hie-8.6.3"
 
 WORKDIR $HOME
 
