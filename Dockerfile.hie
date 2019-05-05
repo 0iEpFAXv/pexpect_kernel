@@ -45,7 +45,7 @@ RUN echo "auth requisite pam_deny.so" >> /etc/pam.d/su && \
 
 USER $NB_UID
 
-ENV PATH /root/.cabal/bin:/root/.local/bin:/opt/cabal/2.4/bin:/opt/ghc/8.6.3/bin:$HOME/.local/bin:$(stack path --local-install-root)/bin:$(stack path --snapshot-install-root)/bin:$(stack path --compiler-bin):$PATH
+ENV PATH /hie/.cabal/bin:/root/.local/bin:/opt/cabal/2.4/bin:/opt/ghc/8.6.3/bin:$HOME/.local/bin:$(stack path --local-install-root)/bin:$(stack path --snapshot-install-root)/bin:$(stack path --compiler-bin):$PATH
 
 ####### Installing HIE ########
 
@@ -56,6 +56,8 @@ RUN cd /tmp && \
     cd /tmp
 # && \
 #    rm -rf haskell-ide-engine
+
+ENV PATH $PATH:/home/hie/stack_volume/bin:/home/hie/.local/bin:/home/hie/.cabal/bin
 
 EXPOSE 4417
 CMD socat TCP4-LISTEN:4417,reuseaddr,fork EXEC:"hie-8.6.3"

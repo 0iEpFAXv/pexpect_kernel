@@ -1,4 +1,27 @@
 {
+  "projects": [
+    {
+      "source": {
+        "location": "https://github.com/TBillTech/classy-prelude-template.git",
+        "type": "github",
+        "parameters": {}
+      },
+      "description": "Classy Prelude plus lots of language extensions for Haskell",
+      "problems": [],
+      "mixins": [
+        "pullrequest"
+      ],
+      "links": [],
+      "name": "classy-prelude-template",
+      "type": "haskell",
+      "path": "/classy-prelude-template",
+      "attributes": {
+        "contribute_to_branch": [
+          "master"
+        ]
+      }
+    }
+  ],
   "environments": {
     "default": {
       "recipe": {
@@ -8,7 +31,6 @@
       },
       "machines": {
         "haskell-ls-machine": {
-          "env": {},
           "servers": {
             "haskell-ls": {
               "protocol": "tcp",
@@ -23,19 +45,19 @@
           },
           "volumes": {
             "stack": {
-              "path": "/home/user/.stack"
+              "path": "/home/hie/.stack"
             },
             "projects": {
               "path": "/projects"
             }
           },
+          "env": {},
           "installers": [],
           "attributes": {
             "memoryLimitBytes": "2147483648"
           }
         },
         "haskell-dev-machine": {
-          "env": {},
           "servers": {
             "jupyter": {
               "protocol": "http",
@@ -45,12 +67,13 @@
           },
           "volumes": {
             "stack": {
-              "path": "/home/user/.stack"
+              "path": "/home/hie/.stack"
             },
             "projects": {
               "path": "/projects"
             }
           },
+          "env": {},
           "installers": [
             "org.eclipse.che.exec",
             "org.eclipse.che.unison",
@@ -66,29 +89,6 @@
       }
     }
   },
-  "projects": [
-    {
-      "source": {
-        "location": "https://github.com/TBillTech/classy-prelude-template.git",
-        "type": "github",
-        "parameters": {}
-      },
-      "description": "Classy Prelude plus lots of language extensions for Haskell",
-      "links": [],
-      "mixins": [
-        "pullrequest"
-      ],
-      "problems": [],
-      "name": "classy-prelude-template",
-      "type": "blank",
-      "path": "/classy-prelude-template",
-      "attributes": {
-        "contribute_to_branch": [
-          "master"
-        ]
-      }
-    }
-  ],
   "commands": [],
   "defaultEnv": "default",
   "name": "haskell-workspace",
@@ -98,4 +98,3 @@
   },
   "links": []
 }
-
