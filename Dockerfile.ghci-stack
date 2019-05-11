@@ -36,7 +36,6 @@ RUN sudo localedef -i en_US -f UTF-8 en_US.UTF-8 && \
     svn --version && \
     sed -i 's/# store-passwords = no/store-passwords = yes/g' /home/hie/.subversion/servers && \
     sed -i 's/# store-plaintext-passwords = no/store-plaintext-passwords = yes/g' /home/hie/.subversion/servers
-#COPY open-jdk-source-file-location /open-jdk-source-file-location
 EXPOSE 22 4403
 WORKDIR /projects
 
@@ -141,5 +140,7 @@ EXPOSE 8888
 WORKDIR /home/hie
 
 COPY ["ghci_entrypoint.sh", "/home/hie/entrypoint.sh"]
+COPY haskell_files/nburl.py /home/hie/nburl.py
+COPY haskell_files/cabal_executable.py /home/hie/cabal_executable.py
 ENTRYPOINT ["/home/hie/entrypoint.sh"]
 CMD ["jupyter", "notebook", "--ip=0.0.0.0"]

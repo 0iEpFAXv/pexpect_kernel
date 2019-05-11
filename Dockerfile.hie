@@ -62,6 +62,6 @@ ENV PATH $PATH:/home/hie/stack_volume/bin:/home/hie/.local/bin:/home/hie/.cabal/
 EXPOSE 4417
 CMD socat TCP4-LISTEN:4417,reuseaddr,fork EXEC:"hie-8.6.3"
 
-WORKDIR $HOME
+WORKDIR /projects
 
 
