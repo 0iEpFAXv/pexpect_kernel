@@ -103,7 +103,44 @@
     "editor": "",
     "plugins": ""
   },
-  "commands": [],
+  "commands": [
+    {
+      "commandLine": "/usr/bin/python3 nburl.py ${server.jupyter}",
+      "name": "Jupyter Notebook",
+      "type": "custom",
+      "attributes": {}
+    },
+    {
+      "commandLine": "cd ${current.project.path} && stack build",
+      "name": "Stack Build",
+      "type": "custom",
+      "attributes": {}
+    },
+    {
+      "commandLine": "cd ${current.project.path} && stack clean",
+      "name": "Stack Clean",
+      "type": "custom",
+      "attributes": {}
+    },
+    {
+      "commandLine": "pwd && echo ${current.project.path} && echo ${editor.current.file.basename}",
+      "name": "Show Paths",
+      "type": "custom",
+      "attributes": {}
+    },
+    {
+      "commandLine": "cd ${current.project.path} && stack exec `/usr/bin/python3 /home/hie/cabal_executable.py ${editor.current.file.path} test`",
+      "name": "Run Tests",
+      "type": "custom",
+      "attributes": {}
+    },
+    {
+      "commandLine": "cd ${current.project.path} && stack exec `/usr/bin/python3 /home/hie/cabal_executable.py ${editor.current.file.path} exe`",
+      "name": "Run Executable",
+      "type": "custom",
+      "attributes": {}
+    }
+  ],  
   "links": []
 }
 
