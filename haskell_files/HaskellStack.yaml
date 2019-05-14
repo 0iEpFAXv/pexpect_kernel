@@ -1,3 +1,5 @@
+  Building and Developing Haskell with the HIE LS Machin
+
 services:
  haskell-ls-machine:
   image: tbilltechrep/hie-ls-machine
@@ -8,3 +10,21 @@ services:
   depends_on:
    - haskell-ls-machine
 
+  "name": "Jupyter Notebook",
+  "commandLine": "/usr/bin/python3 nburl.py ${server.jupyter}",
+
+  "name": "Stack Build",
+  "commandLine": "cd ${current.project.path} && stack build",
+
+  "name": "Stack Clean",
+  "commandLine": "cd ${current.project.path} && stack clean",
+
+  "name": "Show Paths",
+  "commandLine": "pwd && echo ${current.project.path} && echo ${editor.current.file.basename}",
+
+  "name": "Run Tests",
+  "commandLine": "cd ${current.project.path} && stack exec `/usr/bin/python3 /home/hie/cabal_executable.py ${editor.current.file.path} test`",
+
+  "name": "Run Executable",
+  "commandLine": "cd ${current.project.path} && stack exec `/usr/bin/python3 /home/hie/cabal_executable.py ${editor.current.file.path} exe`",
+ 
